@@ -13,6 +13,7 @@ export const addMessageToStore = (state, payload) => {
 
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
+      // need to make a copy of the conversation that's updated for Redux to pick up the change and cause a re-render
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
@@ -70,6 +71,7 @@ export const addSearchedUsersToStore = (state, users) => {
 export const addNewConvoToStore = (state, recipientId, message) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
+      // need to make a copy of the conversation that's updated for Redux to pick up the change and cause a re-render
       const convoCopy = { ...convo };
       convoCopy.id = message.conversationId;
       convoCopy.messages.push(message);
