@@ -14,6 +14,16 @@ router.post("/", async (req, res, next) => {
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
       const message = await Message.create({ senderId, text, conversationId });
+
+      // since the conversation already exists, force an update of the updatedAt property
+      // when the conversations are pulled for display, this field will be used for sorting
+      const convo = await Conversation.findConversation(
+        senderId,
+        recipientId
+      );
+      convo.changed('updatedAt', true)
+      convo.save({ silent: false });
+
       return res.json({ message, sender });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist

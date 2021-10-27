@@ -16,11 +16,12 @@ export const addMessageToStore = (state, payload) => {
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
+      convoCopy.updatedAt = message.updatedAt;
       return convoCopy;
     } else {
       return convo;
     }
-  });
+  }).sort((fc, sc) => new Date(sc.updatedAt) - new Date(fc.updatedAt));
 };
 
 export const addOnlineUserToStore = (state, id) => {
