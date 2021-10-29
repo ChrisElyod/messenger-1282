@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   readMessageAvatar: {
     height: 20,
     width: 20,
-    marginTop: 6
+    marginTop: 10
   },
 }));
 
