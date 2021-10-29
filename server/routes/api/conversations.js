@@ -81,4 +81,31 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Updates a message by conversation ID where the sender is not the person that's viewed the message 
+router.patch("/:convoId", async (req, res, next) => {
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+
+  try {
+    const { convoId } = req.params;
+    const userId = req.user.id;
+
+    const updatedMessages = await Message.update({ isRead: true }, {
+      where: {
+        conversationId: convoId,
+        senderId: {
+          [Op.not]: userId
+        },
+        isRead: false
+      },
+      returning: true,
+    })
+
+    res.json({ updatedMessages: updatedMessages[0] });
+  } catch(error) {
+    next(error);
+  }
+});
+
 module.exports = router;

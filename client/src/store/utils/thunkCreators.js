@@ -91,6 +91,10 @@ const sendMessage = (data, body) => {
   });
 };
 
+const sendMessageRead = (conversationId) => {
+  socket.emit("read-message", conversationId);
+}
+
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
 export const postMessage = (body) => async (dispatch) => {
@@ -117,3 +121,16 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
     console.error(error);
   }
 };
+
+export const addReadMessage = (conversationId) => async (dispatch) => {
+  try {
+    const { data } = await axios.patch(`/api/conversations/${conversationId}`);
+    console.log(data);
+    if (data.updatedMessages) {
+      await dispatch(fetchConversations());
+      sendMessageRead(conversationId)
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
