@@ -125,7 +125,6 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 export const addReadMessage = (conversationId) => async (dispatch) => {
   try {
     const { data } = await axios.patch(`/api/conversations/${conversationId}`);
-    console.log(data);
     if (data.updatedMessages) {
       await dispatch(fetchConversations());
       sendMessageRead(conversationId)
