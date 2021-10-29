@@ -95,6 +95,11 @@ router.patch("/:convoId", async (req, res, next) => {
 
   try {
     const { convoId } = req.params;
+
+    if (!convoId) {
+      res.status(400).send({ message: "convoId is required" });
+    }
+
     const userId = req.user.id;
 
     const updatedMessages = await Message.update({ isRead: true }, {
