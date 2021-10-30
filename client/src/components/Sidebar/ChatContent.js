@@ -6,11 +6,11 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     justifyContent: "space-between",
-    marginLeft: 20,
+    marginLeft: theme.spacing(2.5),
     flexGrow: 1,
   },
   username: {
-    fontWeight: "bold",
+    fontWeight: theme.typography.fontWeightBold,
     letterSpacing: -0.2,
   },
   previewText: {
@@ -18,15 +18,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
-  unreadMessages: {
-    marginRight: 20,
-    color: "white",
-    backgroundColor: "#3A8DFF",
-    height: "100%",
-    borderRadius: "1rem",
-    paddingLeft: 7.5,
-    paddingRight: 7.5,
-    alignSelf: "center"
+  unreadPreview: {
+    fontWeight: theme.typography.fontWeightBold,
+    color: theme.palette.common.black,
   },
 }));
 
@@ -42,11 +36,10 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography className={`${classes.previewText} ${conversation.unreadMessages > 0 && classes.unreadPreview}`}>
           {latestMessageText}
         </Typography>
       </Box>
-      {conversation.unreadMessages > 0 && <span className={classes.unreadMessages}>{conversation.unreadMessages}</span>}
     </Box>
   );
 };
