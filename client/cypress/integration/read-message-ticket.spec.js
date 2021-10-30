@@ -37,7 +37,7 @@ describe("Bug Fix: Sending Messages", () => {
   it("checks the unread messages indicator", () => {
     cy.reload();
     cy.login(tom.username, tom.password);
-    cy.get("span[class=makeStyles-unreadMessages-29]").should("contain", "3");
+    cy.get("span[data-testid='unread-messages']").children('span').should("contain", "3");
 
     cy.contains("Stefan").click();
   });

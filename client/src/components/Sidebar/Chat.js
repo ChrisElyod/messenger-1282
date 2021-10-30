@@ -44,6 +44,7 @@ const Chat = (props) => {
         color="primary"
         className={classes.root}
         onClick={() => handleClick(conversation)}
+        data-testid="unread-messages"
       >
         <BadgeAvatar
           photoUrl={otherUser.photoUrl}
