@@ -95,25 +95,22 @@ router.patch("/:convoId", async (req, res, next) => {
 
   try {
     const { convoId } = req.params;
+    const userId = req.user.id;
 
     if (!convoId) {
       res.status(400).send({ message: "convoId is required" });
     }
 
-    const userId = req.user.id;
+    const isInConversation = await Conversation.findConversationWithId(convoId, userId);
+    if (!isInConversation) return res.sendStatus(401);
 
-    const updatedMessages = await Message.update({ isRead: true }, {
-      where: {
-        conversationId: convoId,
-        senderId: {
-          [Op.not]: userId
-        },
-        isRead: false
-      },
-      returning: true,
-    })
+    const updatedMessages = await Conversation.updateConversation(convoId, userId);
+    
+    if (updatedMessages[0] > 0) {
+      return res.json({ updatedMessages: updatedMessages[0] });
+    }
 
-    res.json({ updatedMessages: updatedMessages[0] });
+    return res.sendStatus(204);
   } catch(error) {
     next(error);
   }

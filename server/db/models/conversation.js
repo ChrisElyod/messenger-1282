@@ -22,4 +22,37 @@ Conversation.findConversation = async function (user1Id, user2Id) {
   return conversation;
 };
 
+Conversation.findConversationWithId = async (convoId, userId) => {
+  const conversation = await Conversation.findOne({
+    where: {
+      id: convoId,
+      [Op.or]: [
+        {
+          user1Id: userId
+        },
+        {
+          user2Id: userId
+        }
+      ]
+    }
+  });
+
+  return conversation;
+}
+
+Conversation.updateConversation = async (convoId, userId) => {
+  const updatedMessages = await Message.update({ isRead: true }, {
+    where: {
+      conversationId: convoId,
+      senderId: {
+        [Op.not]: userId
+      },
+      isRead: false
+    },
+    returning: true,
+  });
+
+  return updatedMessages;
+}
+
 module.exports = Conversation;
