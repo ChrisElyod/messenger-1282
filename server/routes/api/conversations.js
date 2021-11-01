@@ -102,7 +102,7 @@ router.patch("/:convoId", async (req, res, next) => {
     }
 
     const isInConversation = await Conversation.findConversationWithId(convoId, userId);
-    if (!isInConversation) return res.sendStatus(401);
+    if (!isInConversation) return res.sendStatus(403);
 
     const updatedMessages = await Conversation.updateConversation(convoId, userId);
     

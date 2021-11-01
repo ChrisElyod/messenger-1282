@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setMessagesRead
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -91,8 +92,11 @@ const sendMessage = (data, body) => {
   });
 };
 
-const sendMessageRead = (conversationId) => {
-  socket.emit("read-message", conversationId);
+const sendMessageRead = (conversationId, userId) => {
+  socket.emit("read-message", {
+    conversationId,
+    userId
+  });
 }
 
 // message format to send: {recipientId, text, conversationId}
@@ -122,14 +126,14 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-export const addReadMessage = (conversationId) => async (dispatch) => {
+export const addReadMessage = (conversationId, userId) => async (dispatch) => {
   try {
     const { data } = await axios.patch(`/api/conversations/${conversationId}`);
     if (data.updatedMessages) {
-      await dispatch(fetchConversations());
-      sendMessageRead(conversationId)
+      dispatch(setMessagesRead(conversationId, userId));
+      sendMessageRead(conversationId, userId)
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

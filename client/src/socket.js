@@ -4,8 +4,9 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
+  setMessagesRead
 } from "./store/conversations";
-import { fetchConversations, addReadMessage } from "./store/utils/thunkCreators";
+import { addReadMessage } from "./store/utils/thunkCreators";
 
 const socket = io(window.location.origin);
 
@@ -19,18 +20,20 @@ socket.on("connect", () => {
   socket.on("remove-offline-user", (id) => {
     store.dispatch(removeOfflineUser(id));
   });
-  socket.on("new-message", (data) => {
-    const { activeConversation } = store.getState()
+  socket.on("new-message", async (data) => {
+    store.dispatch(setNewMessage(data.message, data.sender));
+
+    const { activeConversation } = store.getState();
     if (activeConversation === data.message.senderId) {
-      store.dispatch(addReadMessage(data.message.conversationId))
+      store.dispatch(addReadMessage(data.message.conversationId, data.message.senderId))
       return;
     };
-    store.dispatch(setNewMessage(data.message, data.sender));
+    
   });
-  socket.on("read-message", (conversationId) => {
+  socket.on("read-message", (data) => {
     const currentState = store.getState();
-    if (currentState.conversations.find(conversation => conversation.id === conversationId)) {
-      store.dispatch(fetchConversations());
+    if (currentState.conversations.find(conversation => conversation.id === data.conversationId)) {
+      store.dispatch(setMessagesRead(data.conversationId, data.userId));
     }
   })
 });
