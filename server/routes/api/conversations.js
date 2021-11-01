@@ -70,6 +70,12 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      // gets the number of unread messages for initial render
+      convoJSON.unreadMessages = convoJSON.messages.reduce((previousValue, currentMessage) => {
+        const shouldAdd = currentMessage.isRead || currentMessage.senderId === userId ? 0 : 1;
+        return previousValue + shouldAdd;
+      }, 0);
+
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;
@@ -77,6 +83,35 @@ router.get("/", async (req, res, next) => {
 
     res.json(conversations);
   } catch (error) {
+    next(error);
+  }
+});
+
+// Updates a message by conversation ID where the sender is not the person that's viewed the message 
+router.patch("/:convoId", async (req, res, next) => {
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+
+  try {
+    const { convoId } = req.params;
+    const userId = req.user.id;
+
+    if (!convoId) {
+      res.status(400).send({ message: "convoId is required" });
+    }
+
+    const isInConversation = await Conversation.findConversationWithId(convoId, userId);
+    if (!isInConversation) return res.sendStatus(403);
+
+    const updatedMessages = await Conversation.updateConversation(convoId, userId);
+    
+    if (updatedMessages[0] > 0) {
+      return res.json({ updatedMessages: updatedMessages[0] });
+    }
+
+    return res.sendStatus(204);
+  } catch(error) {
     next(error);
   }
 });
