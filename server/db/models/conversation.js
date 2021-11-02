@@ -1,4 +1,3 @@
-// const Sequelize = require("sequelize");
 const { Op, DataTypes } = require("sequelize");
 const db = require("../db");
 const Message = require("./message");
