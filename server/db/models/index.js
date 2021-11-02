@@ -11,8 +11,8 @@ const UserConversation = require("./user_conversation");
  * Remove lines 17-19 and uncomment the belongsToMany methods below
  * 
  */
-// Conversation.belongsToMany(User, { through: UserConversation })
-// User.belongsToMany(Conversation, { through: UserConversation })
+// Conversation.belongsToMany(User, { through: UserConversation, foreignKey: "fk_userConversation" })
+// User.belongsToMany(Conversation, { through: UserConversation, foreignKey: "fk_conversationUser" })
 
 User.hasMany(Conversation);
 Conversation.belongsTo(User, { as: "user1" });
